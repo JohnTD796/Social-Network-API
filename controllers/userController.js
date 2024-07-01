@@ -90,8 +90,31 @@ module.exports = {
   
       res.json({ message: 'Friend added successfully', user: updatedUser });
     } catch (err) {
-      console.error('Error adding friend:', err);
       res.status(500).json({ message: 'Error adding friend', error: err });
+    }
+  },
+
+  async deleteFriend (req, res) {
+    try {
+      const { userId, friendId } = req.params;
+  
+      if (!friendId) {
+        return res.status(400).json({ message: 'Invalid friend ID format' });
+      }
+  
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { $pull: { friends: friendId } },
+        { runValidators: true, new: true }
+      );
+  
+      if (!updatedUser) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      res.json({ message: 'Friend deleted', user: updatedUser });
+    } catch (err) {
+      res.status(500).json({ message: 'Error deleting friend', error: err });
     }
   },
 };
