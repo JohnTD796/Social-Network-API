@@ -1,4 +1,5 @@
 const { Thought, User } = require('../models')
+const { Types } = require('mongoose')
 
 module.exports = {
   async getThoughts(req, res) {
@@ -9,7 +10,7 @@ module.exports = {
       res.status(500).json(err);
     }
   },
-  
+
   async getSingleThought(req, res) {
     try {
       const thought = await Thought.findOne({ _id: req.params.thoughtId })
@@ -29,8 +30,8 @@ module.exports = {
       const createThought = await Thought.create(req.body);
       const updatedUser = await User.findByIdAndUpdate(
         req.body.userId,
-        { $push: { thoughts: createThought._id} },
-        { new: true }
+        { $push: { thoughts: createThought._id } },
+        { runValidators: true, new: true }
       );
       console.log(updatedUser)
       res.json(createThought);
@@ -67,6 +68,56 @@ module.exports = {
       res.json({ message: 'Thought deleted successfully', user: deleteThought });
     } catch (err) {
       res.status(500).json(err);
+    }
+  },
+
+  async createReaction(req, res) {
+    try {
+      const thoughtId = req.params.thoughtId
+      const reaction = {
+        reactionId: new Types.ObjectId(),
+        reactionBody: req.body.reactionBody,
+        username: req.body.username,
+        createdAt: new Date(),
+      }
+      const updatedThought = await Thought.findByIdAndUpdate(
+        thoughtId,
+        { $push: { reactions: reaction } },
+        { runValidators: true, new: true }
+      );
+
+      if (!updatedThought) {
+        return res.status(404).json({ message: 'Thought not found' });
+      }
+
+      res.json({ message: 'Reaction added successfully', thought: updatedThought });
+
+    } catch (err) {
+      console.log(err)
+      res.status(500).json(err)
+    }
+  },
+
+  async deleteReaction(req, res) {
+    try {
+      const thoughtId = req.params.thoughtId
+      const reactionId = req.params.reactionId
+
+      const updatedThought = await Thought.findByIdAndUpdate(
+        thoughtId,
+        { $pull: { reactions: { _id: reactionId } } },
+        { runValidators: true, new: true }
+      );
+
+      if (!updatedThought) {
+        return res.status(404).json({ message: 'Thought not found' });
+      }
+
+      res.json({ message: 'Reaction deleted successfully', thought: updatedThought });
+
+    } catch (err) {
+      console.log(err)
+      res.status(500).json(err)
     }
   },
 }
