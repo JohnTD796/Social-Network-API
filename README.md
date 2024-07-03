@@ -12,7 +12,7 @@
   - [License](#license)
 
   ## Installation
-  Dowload the GitHub repository, open the project, install the npm packages /'npm i'/ and initiate the server with /'node index,js'/
+  Dowload the GitHub repository, open the project, install the npm packages 'npm i' and initiate the server with 'node index.js'
 
   ## Usage
   View the routes in the routes folder to determine the routing structure and then use insomnia to query/ make changes to the mongo database.
