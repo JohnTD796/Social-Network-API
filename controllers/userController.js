@@ -17,7 +17,7 @@ module.exports = {
     try {
       const user = await User.findOne({ _id: req.params.userId })
         .select('-__v')
-        .populate('thoughts', 'friends');
+        .populate('thoughts');
 
       if (!user) {
         return res.status(404).json({ message: 'No user with that ID' });
@@ -25,6 +25,7 @@ module.exports = {
 
       res.json(user);
     } catch (err) {
+      console.log(err)
       res.status(500).json(err);
     }
   },
