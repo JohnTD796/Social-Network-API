@@ -33,7 +33,6 @@ module.exports = {
         { $push: { thoughts: createThought._id } },
         { runValidators: true, new: true }
       );
-      console.log(updatedUser)
       res.json(createThought);
     } catch (err) {
       res.status(500).json(err);

@@ -33,7 +33,6 @@ module.exports = {
   async createUser(req, res) {
     try {
       const createUser = await User.create(req.body);
-      console.log(createUser)
       res.json(createUser);
     } catch (err) {
       res.status(500).json(err);
